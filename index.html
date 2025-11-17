@@ -1,0 +1,160 @@
+data:text/html, <!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Kesehatan Pernapasan</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f7f3fa;
+      color: #4a306d;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      background-color: #cdb4db;
+      color: #fff;
+      padding: 20px;
+      border-radius: 0 0 20px 20px;
+    }
+    section {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 600px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #b495c9;
+      font-size: 15px;
+    }
+    button {
+      background-color: #b495c9;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #9c7ebd;
+    }
+    #infoPenyakit {
+      margin-top: 20px;
+      background: #f5edfa;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌸 Monitoring Kesehatan Pernapasan Warga</h1>
+    <p>Pelajari penyakit pernapasan dan lakukan tes kesehatanmu!</p>
+  </header>
+
+  <!-- Bagian Informasi Penyakit -->
+  <section id="halamanInformasi">
+    <h2>🫁 Informasi Penyakit Pernapasan</h2>
+    <p>Pilih penyakit untuk melihat informasinya:</p>
+
+    <select id="penyakitSelect">
+      <option value="">-- Pilih penyakit --</option>
+      <option value="asma">Asma</option>
+      <option value="ispa">ISPA</option>
+      <option value="bronkitis">Bronkitis</option>
+      <option value="alergi">Alergi Debu</option>
+    </select>
+
+    <div id="infoPenyakit" class="hidden"></div>
+
+    <br>
+    <button onclick="bukaTes()">🩺 Tes Kesehatan Pernapasan</button>
+  </section>
+
+  <!-- Bagian Tes Kesehatan -->
+  <section id="halamanTes" class="hidden">
+    <h2>🩺 Tes Kesehatan Pernapasan</h2>
+    <form id="formTes">
+      <p>Apakah Anda sering mengalami hal berikut?</p>
+      <label><input type="checkbox" name="gejala" value="batuk"> Batuk terus-menerus</label><br>
+      <label><input type="checkbox" name="gejala" value="sesak"> Sesak napas</label><br>
+      <label><input type="checkbox" name="gejala" value="flu"> Sering pilek / flu</label><br>
+      <label><input type="checkbox" name="gejala" value="debu"> Terpapar debu/polusi</label><br><br>
+      <button type="submit">Lihat Hasil Tes</button>
+    </form>
+  </section>
+
+  <!-- Bagian Hasil Tes -->
+  <section id="halamanHasil" class="hidden">
+    <h2>📊 Hasil Tes & Saran</h2>
+    <div id="hasil"></div>
+    <br>
+    <button onclick="kembaliHome()">⬅️ Kembali ke Halaman Utama</button>
+  </section>
+
+  <script>
+    // Data penyakit (bisa kamu ubah sesuka kamu)
+    const penyakitData = {
+      asma: "Asma adalah penyakit pernapasan kronis yang menyebabkan sesak napas dan batuk karena penyempitan saluran udara.",
+      ispa: "ISPA (Infeksi Saluran Pernapasan Akut) ditandai dengan batuk, pilek, demam, dan terkadang sesak napas.",
+      bronkitis: "Bronkitis terjadi saat saluran udara di paru-paru meradang, sering menyebabkan batuk berdahak.",
+      alergi: "Alergi debu disebabkan reaksi tubuh terhadap partikel debu, memicu bersin, batuk, atau hidung tersumbat."
+    };
+
+    const penyakitSelect = document.getElementById("penyakitSelect");
+    const infoPenyakit = document.getElementById("infoPenyakit");
+
+    penyakitSelect.addEventListener("change", function() {
+      const pilihan = this.value;
+      if (pilihan && penyakitData[pilihan]) {
+        infoPenyakit.innerHTML = "<p>" + penyakitData[pilihan] + "</p>";
+        infoPenyakit.classList.remove("hidden");
+      } else {
+        infoPenyakit.classList.add("hidden");
+      }
+    });
+
+    // Navigasi antar halaman
+    function bukaTes() {
+      document.getElementById("halamanInformasi").classList.add("hidden");
+      document.getElementById("halamanTes").classList.remove("hidden");
+    }
+
+    function kembaliHome() {
+      document.getElementById("halamanHasil").classList.add("hidden");
+      document.getElementById("halamanInformasi").classList.remove("hidden");
+    }
+
+    // Tes kesehatan
+    document.getElementById("formTes").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const gejala = Array.from(document.querySelectorAll("input[name='gejala']:checked")).map(i => i.value);
+      let hasilText = "";
+
+      if (gejala.includes("sesak") && gejala.includes("batuk")) {
+        hasilText = "<b>Kemungkinan:</b> Asma ringan.<br><b>Saran:</b> Hindari udara dingin, gunakan inhaler, dan konsultasi ke dokter jika sering kambuh.";
+      } else if (gejala.includes("flu") && gejala.includes("debu")) {
+        hasilText = "<b>Kemungkinan:</b> Alergi debu atau ISPA.<br><b>Saran:</b> Gunakan masker, perbanyak minum air hangat, hindari lingkungan berdebu.";
+      } else if (gejala.includes("batuk")) {
+        hasilText = "<b>Kemungkinan:</b> Bronkitis ringan.<br><b>Saran:</b> Istirahat cukup, hindari rokok dan polusi.";
+      } else {
+        hasilText = "<b>Kesehatan pernapasan Anda tampak baik!</b><br>Jaga pola hidup sehat dan rutin olahraga ringan.";
+      }
+
+      document.getElementById("halamanTes").classList.add("hidden");
+      document.getElementById("halamanHasil").classList.remove("hidden");
+      document.getElementById("hasil").innerHTML = hasilText;
+    });
+  </script>
+</body>
+</html>
