@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Kesehatan Pernapasan</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f7f3fa;
+      color: #4a306d;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      background-color: #cdb4db;
+      color: #fff;
+      padding: 20px;
+      border-radius: 0 0 20px 20px;
+    }
+    section {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 600px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* BACKGROUND GAMBAR UNTUK HALAMAN INFORMASI */
+    #halamanInformasi {
+      background-image: url('https://rsko-jakarta.com/rahasia/assets/upload/Desain_tanpa_judul_(26).png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* LAYER OPACITY DI ATAS GAMBAR */
+    #halamanInformasi::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.65);
+      border-radius: 15px;
+      z-index: 1;
+    }
+
+    /* SUPAYA TULISAN TIDAK KETUTUP OPACITY */
+    #halamanInformasi * {
+      position: relative;
+      z-index: 2;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #b495c9;
+      font-size: 15px;
+    }
+    button {
+      background-color: #b495c9;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #9c7ebd;
+    }
+    #infoPenyakit {
+      margin-top: 20px;
+      background: #f5edfa;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    .pertanyaan {
+      text-align: left;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1> ╭────╮<br>Breathery<br>╰────╯ </h1>
+    <p>Pelajari penyakit pernapasan dan lakukan tes kesehatanmu!</p>
+  </header>
+
+  <!-- HALAMAN INFORMASI -->
+  <section id="halamanInformasi">
+    <h2>🫁 Informasi Penyakit Pernapasan</h2>
+    <p>Pilih penyakit untuk melihat informasinya:</p>
+
+    <select id="penyakitSelect">
+      <option value="">-- Pilih penyakit --</option>
+      <option value="asma">Asma</option>
+      <option value="bronkitis">Bronkitis</option>
+      <option value="ppok">PPOK</option>
+      <option value="kanker">Kanker Paru-Paru</option>
+      <option value="pneumonia">Pneumonia</option>
+    </select>
+
+    <div id="infoPenyakit" class="hidden"></div>
+
+    <br>
+    <button onclick="bukaTes()">🩺 Tes Kesehatan Pernapasan</button>
+  </section>
+
+  <!-- HALAMAN TES -->
+  <section id="halamanTes" class="hidden">
+    <h2>🩺 Tes Kesehatan Pernapasan</h2>
+    <form id="formTes">
+      <p>Apakah Anda mengalami hal berikut?</p>
+
+      <div class="pertanyaan">1. Batuk berkepanjangan<br>
+        <label><input type="radio" name="batuk" value="yes"> Yes</label>
+        <label><input type="radio" name="batuk" value="no"> No</label>
+      </div>
+
+      <div class="pertanyaan">2. Sesak napas<br>
+        <label><input type="radio" name="sesak" value="yes"> Yes</label>
+        <label><input type="radio" name="sesak" value="no"> No</label>
+      </div>
+
+      <div class="pertanyaan">3. Mudah lelah saat aktivitas ringan<br>
+        <label><input type="radio" name="lelah" value="yes"> Yes</label>
+        <label><input type="radio" name="lelah" value="no"> No</label>
+      </div>
+
+      <div class="pertanyaan">4. Terpapar debu atau polusi setiap hari<br>
+        <label><input type="radio" name="debu" value="yes"> Yes</label>
+        <label><input type="radio" name="debu" value="no"> No</label>
+      </div>
+
+      <button type="submit">Lihat Hasil Tes</button>
+    </form>
+  </section>
+
+  <!-- HALAMAN HASIL -->
+  <section id="halamanHasil" class="hidden">
+    <h2>📊 Hasil Tes & Saran</h2>
+    <div id="hasil"></div>
+    <br>
+    <button onclick="kembaliHome()">⬅️ Kembali ke Halaman Utama</button>
+  </section>
+
+  <script>
+    const penyakitData = {
+      asma: "Asma adalah penyakit kronis yang menyebabkan penyempitan saluran napas sehingga menimbulkan sesak dan batuk.",
+      bronkitis: "Bronkitis terjadi ketika saluran bronkus meradang dan membuat batuk berdahak.",
+      ppok: "PPOK adalah penyakit paru kronis yang membuat aliran udara terhambat dan menimbulkan sesak napas.",
+      kanker: "Kanker paru-paru adalah pertumbuhan sel abnormal yang merusak jaringan paru-paru.",
+      pneumonia: "Pneumonia adalah infeksi paru-paru yang menyebabkan peradangan pada kantung udara."
+    };
+
+    const penyakitSelect = document.getElementById("penyakitSelect");
+    const infoPenyakit = document.getElementById("infoPenyakit");
+
+    penyakitSelect.addEventListener("change", function () {
+      const p = this.value;
+      if (p && penyakitData[p]) {
+        infoPenyakit.innerHTML = "<p>" + penyakitData[p] + "</p>";
+        infoPenyakit.classList.remove("hidden");
+      } else {
+        infoPenyakit.classList.add("hidden");
+      }
+    });
+
+    function bukaTes() {
+      document.getElementById("halamanInformasi").classList.add("hidden");
+      document.getElementById("halamanTes").classList.remove("hidden");
+    }
+
+    function kembaliHome() {
+      document.getElementById("halamanHasil").classList.add("hidden");
+      document.getElementById("halamanInformasi").classList.remove("hidden");
+    }
+
+    document.getElementById("formTes").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const batuk = document.querySelector("input[name='batuk']:checked");
+      const sesak = document.querySelector("input[name='sesak']:checked");
+      const lelah = document.querySelector("input[name='lelah']:checked");
+      const debu = document.querySelector("input[name='debu']:checked");
+
+      let hasil = "";
+
+      if (!batuk || !sesak || !lelah || !debu) {
+        alert("Harap isi semua pertanyaan!");
+        return;
+      }
+
+      if (batuk.value === "yes" && sesak.value === "yes") {
+        hasil = "<b>Kemungkinan:</b> Gejala Asma atau PPOK.<br><b>Saran:</b> Kurangi aktivitas berat, hindari udara dingin, dan konsultasi jika makin parah.";
+      } else if (batuk.value === "yes" && debu.value === "yes") {
+        hasil = "<b>Kemungkinan:</b> Bronkitis ringan atau iritasi akibat polusi.<br><b>Saran:</b> Gunakan masker, minum air hangat, hindari asap dan debu.";
+      } else if (lelah.value === "yes" && sesak.value === "yes") {
+        hasil = "<b>Kemungkinan:</b> Infeksi seperti Pneumonia.<br><b>Saran:</b> Periksa suhu tubuh, istirahat, dan segera periksa bila gejala bertambah.";
+      } else {
+        hasil = "<b>Kesehatan pernapasan Anda cukup baik!</b><br>Lanjutkan pola hidup sehat dan olahraga ringan.";
+      }
+
+      document.getElementById("halamanTes").classList.add("hidden");
+      document.getElementById("halamanHasil").classList.remove("hidden");
+      document.getElementById("hasil").innerHTML = hasil;
+    });
+  </script>
+
+</body>
+</html>
